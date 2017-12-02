@@ -1,4 +1,4 @@
-package way.dat.threw.throwaway;
+package threw.dat.away;
 
 import org.junit.Test;
 

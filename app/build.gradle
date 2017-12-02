@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 26
     defaultConfig {
-        applicationId "way.dat.threw.throwaway"
+        applicationId "threw.dat.away"
         minSdkVersion 19
         targetSdkVersion 26
         versionCode 1
