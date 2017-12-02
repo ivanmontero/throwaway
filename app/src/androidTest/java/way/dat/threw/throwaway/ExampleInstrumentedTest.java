@@ -1,4 +1,4 @@
-package threw.dat.away;
+package way.dat.threw.throwaway;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("threw.dat.away", appContext.getPackageName());
+        assertEquals("way.dat.threw.throwaway", appContext.getPackageName());
     }
 }
