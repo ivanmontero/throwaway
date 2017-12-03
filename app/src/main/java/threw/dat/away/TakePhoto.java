@@ -5,7 +5,7 @@ import android.os.Bundle;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
-public class CameraPreviewSampleActivity extends Activity {
+public class TakePhoto extends Activity {
     private CameraPreview mPreview;
     private RelativeLayout mLayout;
 
@@ -40,6 +40,7 @@ public class CameraPreviewSampleActivity extends Activity {
         //mPreview.setCenterPosition(270, 130);
 
         mLayout.addView(mPreview, 0, previewLayoutParams);
+
     }
 
     @Override

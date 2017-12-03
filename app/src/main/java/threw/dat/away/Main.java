@@ -4,7 +4,6 @@ import android.Manifest;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.hardware.Camera;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -24,6 +23,8 @@ import clarifai2.dto.input.ClarifaiInput;
 import clarifai2.dto.model.output.ClarifaiOutput;
 import clarifai2.dto.prediction.Concept;
 
+// https://github.com/pikanji/CameraPreviewSample
+
 public class Main extends AppCompatActivity implements View.OnClickListener {
     final ClarifaiClient client = new ClarifaiBuilder("ceb0cdb7a26c4313baa45453b2dad949").buildSync();
     Object labelsMutex = new Object();
@@ -40,7 +41,8 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         Button b1 = (Button) findViewById(R.id.button_sample);
         b1.setOnClickListener(this);
 
-//        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.sombrero);
+        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.banana);
+        getLabels(toByteArray(bitmap));
     }
 
     public byte[] toByteArray(Bitmap bitmap) {
@@ -63,6 +65,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
                         synchronized (labelsMutex) {
                             for (Concept c : clarifaiOutputs.get(0).data()) {
                                 labels.add(new Label(c.name(), c.value()));
+                                System.out.println(c.name() + " " + c.value());
                             }
                         }
                     }
@@ -82,7 +85,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         Intent intent;
         switch (v.getId()) {
             case R.id.button_sample:
-                intent = new Intent(this, CameraPreviewSampleActivity.class);
+                intent = new Intent(this, TakePhoto.class);
                 startActivity(intent);
                 break;
             default:
