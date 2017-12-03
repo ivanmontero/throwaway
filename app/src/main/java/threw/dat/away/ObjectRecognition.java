@@ -65,7 +65,7 @@ public class ObjectRecognition {
 
     public Map<String, Double> getFrequency() {
         Map<String, Double> freq = new HashMap<>();
-        
+
 
 
         return null;

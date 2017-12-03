@@ -13,7 +13,7 @@ public class TakePhoto extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //setContentView(R.layout.take_photo);
         // Hide status-bar
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -22,6 +22,9 @@ public class TakePhoto extends Activity {
 
         // Requires RelativeLayout.
         mLayout = new RelativeLayout(this);
+        //mLayout = (RelativeLayout)findViewById(R.id.take_photo);
+        //Button takePic = (Button) findViewById(R.id.button);
+
         setContentView(mLayout);
     }
 
@@ -40,8 +43,10 @@ public class TakePhoto extends Activity {
         // Un-comment below line to specify the position.
         //mPreview.setCenterPosition(270, 130);
 
-        mLayout.addView(mPreview, -1, previewLayoutParams);
-//        mLayout.addView(new Button(this), 0);
+        mLayout.addView(mPreview, 0, previewLayoutParams);
+        Button pic = new Button(this);
+        pic.setText("Take Picture");
+        mLayout.addView(pic);
 
     }
 
