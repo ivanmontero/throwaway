@@ -78,8 +78,10 @@ public class CameraPreview extends SurfaceView implements SurfaceHolder.Callback
             mCamera = Camera.open();
         }
         Camera.Parameters cameraParams = mCamera.getParameters();
+        cameraParams.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);
         mPreviewSizeList = cameraParams.getSupportedPreviewSizes();
         mPictureSizeList = cameraParams.getSupportedPictureSizes();
+        mCamera.setParameters(cameraParams);
     }
 
     @Override

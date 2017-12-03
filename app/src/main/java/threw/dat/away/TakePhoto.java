@@ -2,6 +2,7 @@ package threw.dat.away;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -39,7 +40,8 @@ public class TakePhoto extends Activity {
         // Un-comment below line to specify the position.
         //mPreview.setCenterPosition(270, 130);
 
-        mLayout.addView(mPreview, 0, previewLayoutParams);
+        mLayout.addView(mPreview, -1, previewLayoutParams);
+//        mLayout.addView(new Button(this), 0);
 
     }
 
