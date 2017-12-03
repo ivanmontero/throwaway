@@ -2,28 +2,36 @@ package threw.dat.away;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Color;
 import android.hardware.Camera;
 import android.icu.text.SimpleDateFormat;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.TypedValue;
 import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+import android.widget.TextView;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Date;
+import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class TakePhoto extends Activity {
     private CameraPreview mPreview;
     private RelativeLayout mLayout;
+    private TextView tv;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         //setContentView(R.layout.take_photo);
         // Hide status-bar
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
@@ -65,6 +73,12 @@ public class TakePhoto extends Activity {
 
         pic.setText("Take Picture");
         mLayout.addView(pic);
+        tv = new TextView(this);
+        tv.setTextSize(TypedValue.COMPLEX_UNIT_SP, 150);
+        tv.setTextColor(Color.WHITE);
+        tv.setVisibility(View.INVISIBLE);
+        mLayout.addView(tv);
+
 
     }
 
@@ -75,6 +89,8 @@ public class TakePhoto extends Activity {
         mLayout.removeView(mPreview); // This is necessary.
         mPreview = null;
     }
+
+    Timer orTimer;
 
     Camera.PictureCallback mPicture = new Camera.PictureCallback() {
         @Override
@@ -102,7 +118,46 @@ public class TakePhoto extends Activity {
                 Log.d("RECOGNITION", l.description + " " + l.score);
             }
 
-            ObjectRecognition.getInstance().clear();
+
+
+
+
+
+
+
+            tv.setVisibility(View.VISIBLE);
+
+            orTimer = new Timer();
+            orTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(ObjectRecognition.getInstance().labelCalls() == 1) {
+                    boolean checked = false;
+                    List<ObjectRecognition.Label> ls = ObjectRecognition.getInstance().getFrequency();
+                    for(int i = 0; i < 5; i++) {
+                        if(ls.get(i).description.equals("can") || ls.get(i).description.equals("bottle")) {
+                            tv.setText("RECYCLE");
+                            checked = true;
+                            break;
+                        } else if (ls.get(i).description.equals("food")) {
+                            tv.setText("COMPOST");
+                            checked = true;
+                            break;
+                        }
+                    }
+                    if(!checked)
+                        tv.setText("TRASH");
+                    ObjectRecognition.getInstance().clear();
+                    orTimer.cancel();
+                }
+            }
+        }, 0, 500);
+
+
+
+
+
+
 
         }
     };

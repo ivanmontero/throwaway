@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 
 import java.util.List;
 import java.util.Timer;
@@ -18,7 +19,7 @@ import java.util.TimerTask;
 
 public class Main extends AppCompatActivity implements View.OnClickListener {
     public ObjectRecognition or;
-    Timer orTimer;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,7 +31,7 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         Button b1 = (Button) findViewById(R.id.button_sample);
         b1.setOnClickListener(this);
 
-        orTimer = new Timer();
+
 
         // IVAN'S PLAYGROUND
 //        or = ObjectRecognition.getInstance();
