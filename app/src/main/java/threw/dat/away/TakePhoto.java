@@ -2,6 +2,7 @@ package threw.dat.away;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
@@ -12,7 +13,7 @@ public class TakePhoto extends Activity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
+        //setContentView(R.layout.take_photo);
         // Hide status-bar
         //getWindow().addFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
@@ -21,6 +22,9 @@ public class TakePhoto extends Activity {
 
         // Requires RelativeLayout.
         mLayout = new RelativeLayout(this);
+        //mLayout = (RelativeLayout)findViewById(R.id.take_photo);
+        //Button takePic = (Button) findViewById(R.id.button);
+
         setContentView(mLayout);
     }
 
@@ -40,6 +44,9 @@ public class TakePhoto extends Activity {
         //mPreview.setCenterPosition(270, 130);
 
         mLayout.addView(mPreview, 0, previewLayoutParams);
+        Button pic = new Button(this);
+        pic.setText("Take Picture");
+        mLayout.addView(pic);
 
     }
 
