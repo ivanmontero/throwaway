@@ -1,10 +1,23 @@
 package threw.dat.away;
 
 import android.app.Activity;
+import android.content.Intent;
+import android.hardware.Camera;
+import android.icu.text.SimpleDateFormat;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
+import android.util.Log;
+import android.view.View;
 import android.widget.Button;
 import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.util.Date;
 
 public class TakePhoto extends Activity {
     private CameraPreview mPreview;
@@ -45,6 +58,12 @@ public class TakePhoto extends Activity {
 
         mLayout.addView(mPreview, 0, previewLayoutParams);
         Button pic = new Button(this);
+        pic.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v){
+                mPreview.mCamera.takePicture(null, null, mPicture);
+            }
+        });
+
         pic.setText("Take Picture");
         mLayout.addView(pic);
 
@@ -57,4 +76,56 @@ public class TakePhoto extends Activity {
         mLayout.removeView(mPreview); // This is necessary.
         mPreview = null;
     }
+
+    Camera.PictureCallback mPicture = new Camera.PictureCallback() {
+        @Override
+        public void onPictureTaken(byte[] data, Camera camera) {
+            File pictureFile = getOutputMediaFile();
+            if (pictureFile == null) {
+                return;
+            }
+            try {
+                FileOutputStream fos = new FileOutputStream(pictureFile);
+                fos.write(data);
+                fos.close();
+            } catch (FileNotFoundException e) {
+
+            } catch (IOException e) {
+            }
+
+            String photoPath = pictureFile.getAbsolutePath();
+            galleryAddPic(photoPath);
+
+        }
+    };
+
+    private static File getOutputMediaFile() {
+        File mediaStorageDir = new File(
+                Environment
+                        .getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES),
+                "MyCameraApp");
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.d("MyCameraApp", "failed to create directory");
+                return null;
+            }
+        }
+        // Create a media file name
+        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss")
+                .format(new Date());
+        File mediaFile;
+        mediaFile = new File(mediaStorageDir.getPath() + File.separator
+                + "IMG_" + timeStamp + ".jpg");
+
+        return mediaFile;
+    }
+
+    private void galleryAddPic(String thePath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(thePath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        this.sendBroadcast(mediaScanIntent);
+    }
+
 }
