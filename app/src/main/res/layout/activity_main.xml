@@ -11,7 +11,7 @@
         android:gravity="center"
         android:layout_weight="1">
         <Button
-            android:text="Camera Preview Sample"
+            android:text="Analyze Object"
             android:id="@+id/button_sample"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content" />

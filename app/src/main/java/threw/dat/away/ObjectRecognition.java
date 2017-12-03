@@ -4,6 +4,7 @@ import android.graphics.Bitmap;
 import android.util.Log;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -11,7 +12,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.TreeMap;
 
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
@@ -26,11 +26,36 @@ public class ObjectRecognition {
     private volatile int labelCalls = 0;
     private List<Label> labels = new ArrayList<>();
 
-    public void getLabels(Bitmap image) {
-       getLabels(toByteArray(image));
+    public void addLabels(Bitmap image) {
+       addLabels(toByteArray(image));
     }
 
-    public void getLabels(byte[] image) {
+    public void addLabels(File file) {
+        client.getDefaultModels().generalModel().predict()
+                .withInputs(ClarifaiInput.forImage(file))
+                .executeAsync(new ClarifaiRequest.Callback<List<ClarifaiOutput<Concept>>>() {
+                    @Override
+                    public void onClarifaiResponseSuccess(List<ClarifaiOutput<Concept>> clarifaiOutputs) {
+                        synchronized (labelsMutex) {
+                            for (Concept c : clarifaiOutputs.get(0).data()) {
+                                labels.add(new Label(c.name(), c.value()));
+                            }
+                        }
+                        labelCalls++;
+                    }
+                    @Override
+                    public void onClarifaiResponseUnsuccessful(int errorCode) {
+                        Log.d("ERROR", errorCode + "");
+                    }
+                    @Override
+                    public void onClarifaiResponseNetworkError(IOException e) {
+                        Log.d("ERROR", e.getMessage());
+                    }
+                });
+
+    }
+
+    public void addLabels(byte[] image) {
         client.getDefaultModels().generalModel().predict()
                 .withInputs(ClarifaiInput.forImage(image))
                 .executeAsync(new ClarifaiRequest.Callback<List<ClarifaiOutput<Concept>>>() {
@@ -107,4 +132,7 @@ public class ObjectRecognition {
         public double score;
         public Label(String d, double s) {description = d; score = s; }
     }
+
+    private static final ObjectRecognition or = new ObjectRecognition();
+    public static ObjectRecognition getInstance() { return or; }
 }

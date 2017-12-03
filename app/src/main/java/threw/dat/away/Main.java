@@ -2,7 +2,6 @@ package threw.dat.away;
 
 import android.Manifest;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -12,14 +11,13 @@ import android.view.View;
 import android.widget.Button;
 
 import java.util.List;
-import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
 // https://github.com/pikanji/CameraPreviewSample
 
 public class Main extends AppCompatActivity implements View.OnClickListener {
-    ObjectRecognition or;
+    public ObjectRecognition or;
     Timer orTimer;
 
     @Override
@@ -35,23 +33,23 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
         orTimer = new Timer();
 
         // IVAN'S PLAYGROUND
-        or = new ObjectRecognition();
-        or.getLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.pie));
-        or.getLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.sombrero));
-        or.getLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.banana));
-
-        orTimer.schedule(new TimerTask() {
-            @Override
-            public void run() {
-                if(or.labelCalls() == 3) {
-                    List<ObjectRecognition.Label> freq = or.getFrequency();
-                    for (ObjectRecognition.Label l : freq) {
-                        Log.d("OBJECT RECOGNITION", l.description + " " + l.score);
-                    }
-                    orTimer.cancel();
-                }
-            }
-        }, 0, 500);
+//        or = ObjectRecognition.getInstance();
+//        or.addLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.pie));
+//        or.addLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.sombrero));
+//        or.addLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.banana));
+//
+//        orTimer.schedule(new TimerTask() {
+//            @Override
+//            public void run() {
+//                if(or.labelCalls() == 3) {
+//                    List<ObjectRecognition.Label> freq = or.getFrequency();
+//                    for (ObjectRecognition.Label l : freq) {
+//                        Log.d("OBJECT RECOGNITION", l.description + " " + l.score);
+//                    }
+//                    orTimer.cancel();
+//                }
+//            }
+//        }, 0, 500);
 
 
     }

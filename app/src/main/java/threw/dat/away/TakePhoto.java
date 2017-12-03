@@ -14,9 +14,7 @@ import android.widget.RelativeLayout;
 import android.widget.RelativeLayout.LayoutParams;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.Date;
 
 public class TakePhoto extends Activity {
@@ -89,13 +87,22 @@ public class TakePhoto extends Activity {
                 FileOutputStream fos = new FileOutputStream(pictureFile);
                 fos.write(data);
                 fos.close();
-            } catch (FileNotFoundException e) {
+            } catch (Exception e) {
 
-            } catch (IOException e) {
             }
 
             String photoPath = pictureFile.getAbsolutePath();
             galleryAddPic(photoPath);
+
+            ObjectRecognition.getInstance().addLabels(pictureFile);
+
+            pictureFile.delete();
+
+            for(ObjectRecognition.Label l : ObjectRecognition.getInstance().getFrequency()) {
+                Log.d("RECOGNITION", l.description + " " + l.score);
+            }
+
+            ObjectRecognition.getInstance().clear();
 
         }
     };
