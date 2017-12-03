@@ -25,6 +25,7 @@ public class TakePhoto extends Activity {
         //mLayout = (RelativeLayout)findViewById(R.id.take_photo);
         //Button takePic = (Button) findViewById(R.id.button);
 
+
         setContentView(mLayout);
     }
 

@@ -11,22 +11,16 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
-
-import clarifai2.api.ClarifaiBuilder;
-import clarifai2.api.ClarifaiClient;
-import clarifai2.api.request.ClarifaiRequest;
-import clarifai2.dto.input.ClarifaiInput;
-import clarifai2.dto.model.output.ClarifaiOutput;
-import clarifai2.dto.prediction.Concept;
+import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 // https://github.com/pikanji/CameraPreviewSample
 
 public class Main extends AppCompatActivity implements View.OnClickListener {
     ObjectRecognition or;
+    Timer orTimer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,8 +31,28 @@ public class Main extends AppCompatActivity implements View.OnClickListener {
 
         Button b1 = (Button) findViewById(R.id.button_sample);
         b1.setOnClickListener(this);
-        Bitmap bitmap = BitmapFactory.decodeResource(this.getResources(), R.drawable.pie);
+
+        orTimer = new Timer();
+
+        // IVAN'S PLAYGROUND
         or = new ObjectRecognition();
+        or.getLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.pie));
+        or.getLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.sombrero));
+        or.getLabels(BitmapFactory.decodeResource(this.getResources(), R.drawable.banana));
+
+        orTimer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                if(or.labelCalls() == 3) {
+                    List<ObjectRecognition.Label> freq = or.getFrequency();
+                    for (ObjectRecognition.Label l : freq) {
+                        Log.d("OBJECT RECOGNITION", l.description + " " + l.score);
+                    }
+                    orTimer.cancel();
+                }
+            }
+        }, 0, 500);
+
 
     }
 

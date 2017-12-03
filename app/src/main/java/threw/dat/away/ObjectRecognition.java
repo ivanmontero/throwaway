@@ -6,9 +6,12 @@ import android.util.Log;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import clarifai2.api.ClarifaiBuilder;
 import clarifai2.api.ClarifaiClient;
@@ -19,9 +22,13 @@ import clarifai2.dto.prediction.Concept;
 
 public class ObjectRecognition {
     private final ClarifaiClient client = new ClarifaiBuilder("ceb0cdb7a26c4313baa45453b2dad949").buildSync();
-    private Object labelsMutex = new Object();
-    private int labelCalls = 0;
+    private final Object labelsMutex = new Object();
+    private volatile int labelCalls = 0;
     private List<Label> labels = new ArrayList<>();
+
+    public void getLabels(Bitmap image) {
+       getLabels(toByteArray(image));
+    }
 
     public void getLabels(byte[] image) {
         client.getDefaultModels().generalModel().predict()
@@ -32,9 +39,9 @@ public class ObjectRecognition {
                         synchronized (labelsMutex) {
                             for (Concept c : clarifaiOutputs.get(0).data()) {
                                 labels.add(new Label(c.name(), c.value()));
-                                System.out.println(c.name() + " " + c.value());
                             }
                         }
+                        labelCalls++;
                     }
                     @Override
                     public void onClarifaiResponseUnsuccessful(int errorCode) {
@@ -45,7 +52,7 @@ public class ObjectRecognition {
                         Log.d("ERROR", e.getMessage());
                     }
                 });
-        labelCalls++;
+
     }
 
     public byte[] toByteArray(Bitmap bitmap) {
@@ -63,12 +70,36 @@ public class ObjectRecognition {
         return labelCalls;
     }
 
-    public Map<String, Double> getFrequency() {
+    public List<Label> getFrequency() {
         Map<String, Double> freq = new HashMap<>();
+        synchronized (labelsMutex) {
+            for(Label l : labels) {
+                if(freq.containsKey(l.description)) {
+                    freq.put(l.description, freq.get(l.description) + l.score / labelCalls);
+                } else {
+                    freq.put(l.description, l.score / labelCalls);
+                }
+            }
 
+        }
+        List<Label> ls = new ArrayList<>();
+        for (String key : freq.keySet()) {
+            ls.add(new Label(key, freq.get(key)));
+        }
+        Collections.sort(ls, new Comparator<Label>() {
+            @Override
+            public int compare(Label label, Label t1) {
+                return (int) (100 * (t1.score - label.score));
+            }
+        });
+        return ls;
+    }
 
-
-        return null;
+    public void clear() {
+        synchronized (labelsMutex) {
+            labels.clear();
+        }
+        labelCalls = 0;
     }
 
     public class Label {
